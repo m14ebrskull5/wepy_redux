@@ -34,7 +34,7 @@
           <button type='primary' size="mini">更多</button>
         </view>
       </picker>
-      <image src="{{editedTodo.userpic}}" class="card" alt="">
+      <image src="{{editedTodo.userpic}}" class="card" alt="" />
         <repeat for="{{alter}}" key="index" index="index" item="item">
           <view>{{item[1]}}:</view><input class='cell-input' name='{{item[0]}}' value=''></input>
         </repeat>
@@ -49,7 +49,7 @@
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
   import { Todo } from '../store/actions'
-  import wx_request from '../utils/wx_request'
+  import wxRequest from '../utils/wx_request'
 
   const updateTodo = Todo.updateTodo
 
@@ -71,55 +71,54 @@
     data = {
       editedTodo: {},
       loading: false,
-      alter:[]
+      alter: []
     }
     methods = {
       async formSubmit (e) {
         this.loading = true
-          console.log(e.detail.value)
-          let filename = await wx_request.canvas({
-              ...e.detail.value,
-              id:e.detail.value.cid,
-              mophone2:e.detail.value.mophone2 || '',
-              mophone3:e.detail.value.mophone3 || '',
-              phone2:e.detail.value.phone2 || '',
-              phone3:e.detail.value.phone3 || '',
-              addr2:e.detail.value.addr2 || '',
-              addr3:e.detail.value.addr3 || '',
-              email2:e.detail.value.email2|| ''
-          })
+        console.log(e.detail.value)
+        let filename = await wxRequest.canvas({
+          ...e.detail.value,
+          id: e.detail.value.cid,
+          mophone2: e.detail.value.mophone2 || '',
+          mophone3: e.detail.value.mophone3 || '',
+          phone2: e.detail.value.phone2 || '',
+          phone3: e.detail.value.phone3 || '',
+          addr2: e.detail.value.addr2 || '',
+          addr3: e.detail.value.addr3 || '',
+          email2: e.detail.value.email2 || ''
+        })
         this.methods.updateTodo(this.editedTodo.id, {
-            ...e.detail.value,
-            userpic:filename[1],
-            logo:'',
-            mophone2:e.detail.value.mophone2 || '',
-            mophone3:e.detail.value.mophone3 || '',
-            phone2:e.detail.value.phone2 || '',
-            phone3:e.detail.value.phone3 || '',
-            addr2:e.detail.value.addr2 || '',
-            addr3:e.detail.value.addr3 || '',
-            email2:e.detail.value.email2|| '',
-            website:e.detail.value.website|| '',
-            fax:e.detail.value.fax|| '',
-            wechat:e.detail.value.wechat || '',
-            remark:e.detail.value.remark || ''
+          ...e.detail.value,
+          userpic: filename[1],
+          logo: '',
+          mophone2: e.detail.value.mophone2 || '',
+          mophone3: e.detail.value.mophone3 || '',
+          phone2: e.detail.value.phone2 || '',
+          phone3: e.detail.value.phone3 || '',
+          addr2: e.detail.value.addr2 || '',
+          addr3: e.detail.value.addr3 || '',
+          email2: e.detail.value.email2 || '',
+          website: e.detail.value.website || '',
+          fax: e.detail.value.fax || '',
+          wechat: e.detail.value.wechat || '',
+          remark: e.detail.value.remark || ''
         }).then((res) => {
-            console.log(res)
           if (!res.error) {
             wepy.navigateBack()
           }
         })
       },
       bindPickerChange (e) {
-          console.log(this.editedTodo.form.alterIndex[e.detail.value].shift())
-          this.alter.push([this.editedTodo.form.alterIndex[e.detail.value].shift(),this.editedTodo.form.alter[e.detail.value]])
-          this.$apply()
+        console.log(this.editedTodo.form.alterIndex[e.detail.value].shift())
+        this.alter.push([this.editedTodo.form.alterIndex[e.detail.value].shift(), this.editedTodo.form.alter[e.detail.value]])
+        this.$apply()
       }
     }
 
     onLoad(option) {
       this.editedTodo = this.list.index.find((t) => {
-        return t.id == option.todoId
+        return t.id === +option.todoId
       })
       this.$apply()
     }

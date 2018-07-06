@@ -105,8 +105,6 @@
 
     async onLoad() {
       this.methods.fetchList()
-      let code = await wxRequest.get()
-      console.log('code', code)
     }
   }
 </script>
