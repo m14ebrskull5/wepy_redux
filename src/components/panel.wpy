@@ -24,6 +24,9 @@
     .counterview {
       margin-left: 120rpx;
     }
+    slot {
+      background: aqua;
+    }
   }
 </style>
 <template>
@@ -32,6 +35,7 @@
       Title
     </slot>
     <slot>
+      sdsd
     </slot>
   </view>
 </template>

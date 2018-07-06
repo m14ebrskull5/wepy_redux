@@ -4,26 +4,43 @@
   margin-top: 30rpx;
   justify-content: center;
   align-items: center;
+  font-size: 13px;
 }
-
+.input-container .card{
+  width:90%;
+}
 .cell-input {
   color: #333;
   flex-grow: 1;
-  margin: 20rpx 0;
-  height: 75rpx;
+  margin: 10rpx 0;
+  height: 30rpx;
   border-radius: 8rpx;
   border: 1px solid #ccc;
   padding: 10rpx;
 }
+  .hide{
+    display: none;
+  }
 </style>
 
 <template>
   <view class="container">
     <form class='input-container' bindsubmit="formSubmit">
-      <input class='cell-input' name='content' value='{{editedTodo.content}}'></input>
-      <view>
-        <button formType='submit' type='primary' size="default" loading='{{loading}}'>Edit</button>
-      </view>
+      <input name="id" class="hide" value="{{editedTodo.id}}"></input>
+      <input name="cid" class="hide" value="{{29}}"></input>
+      <button formType='submit' type='primary' size="default" loading='{{loading}}'>Edit</button>
+      <picker bindchange="bindPickerChange" value="{{index}}" range="{{editedTodo.form.alter}}">
+        <view class="picker">
+          <button type='primary' size="mini">更多</button>
+        </view>
+      </picker>
+      <image src="{{editedTodo.userpic}}" class="card" alt="">
+        <repeat for="{{alter}}" key="index" index="index" item="item">
+          <view>{{item[1]}}:</view><input class='cell-input' name='{{item[0]}}' value=''></input>
+        </repeat>
+        <repeat for="{{editedTodo.form.form}}" key="index" index="index" item="item">
+          <view>{{item[1]}}:</view><input class='cell-input' name='{{item[0]}}' value='{{item[2]}}'></input>
+        </repeat>
     </form>
   </view>
 </template>
@@ -32,6 +49,7 @@
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
   import { Todo } from '../store/actions'
+  import wx_request from '../utils/wx_request'
 
   const updateTodo = Todo.updateTodo
 
@@ -52,25 +70,56 @@
 
     data = {
       editedTodo: {},
-      loading: false
+      loading: false,
+      alter:[]
     }
-
-    computed = {}
-
     methods = {
-      formSubmit (e) {
+      async formSubmit (e) {
         this.loading = true
-        this.methods.updateTodo(this.editedTodo._id, e.detail.value).then((res) => {
+          console.log(e.detail.value)
+          let filename = await wx_request.canvas({
+              ...e.detail.value,
+              id:e.detail.value.cid,
+              mophone2:e.detail.value.mophone2 || '',
+              mophone3:e.detail.value.mophone3 || '',
+              phone2:e.detail.value.phone2 || '',
+              phone3:e.detail.value.phone3 || '',
+              addr2:e.detail.value.addr2 || '',
+              addr3:e.detail.value.addr3 || '',
+              email2:e.detail.value.email2|| ''
+          })
+        this.methods.updateTodo(this.editedTodo.id, {
+            ...e.detail.value,
+            userpic:filename[1],
+            logo:'',
+            mophone2:e.detail.value.mophone2 || '',
+            mophone3:e.detail.value.mophone3 || '',
+            phone2:e.detail.value.phone2 || '',
+            phone3:e.detail.value.phone3 || '',
+            addr2:e.detail.value.addr2 || '',
+            addr3:e.detail.value.addr3 || '',
+            email2:e.detail.value.email2|| '',
+            website:e.detail.value.website|| '',
+            fax:e.detail.value.fax|| '',
+            wechat:e.detail.value.wechat || '',
+            remark:e.detail.value.remark || ''
+        }).then((res) => {
+            console.log(res)
           if (!res.error) {
             wepy.navigateBack()
           }
         })
+      },
+      bindPickerChange (e) {
+          console.log(this.editedTodo.form.alterIndex[e.detail.value].shift())
+          this.alter.push([this.editedTodo.form.alterIndex[e.detail.value].shift(),this.editedTodo.form.alter[e.detail.value]])
+          this.$apply()
       }
     }
 
     onLoad(option) {
-      this.editedTodo = this.list.find((t) => {
-        return t._id === option.todoId
+      this.editedTodo = this.list.index.find((t) => {
+        return t.id == option.todoId
       })
       this.$apply()
     }

@@ -17,15 +17,26 @@ export default handleActions({
     if (action.error) {
       return state
     } else {
+      console.log(action)
+        // state.list.index.map((t) => {
+        //     if (t.id == action.payload.id) {
+        //         return action.payload
+        //     } else {
+        //         return t
+        //     }
+        // })
+        console.log(state.list.index)
       return {
         ...state,
-        list: state.list.map((t) => {
-          if (t._id === action.payload._id) {
-            return action.payload
-          } else {
-            return t
-          }
-        })
+        list:{
+           index: state.list.index.map((t) => {
+            if (t.id == action.payload.id) {
+                return action.payload
+            } else {
+                return t
+            }
+          })
+        }
       }
     }
   },
