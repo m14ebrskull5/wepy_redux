@@ -57,7 +57,6 @@
   import Tip from '../utils/tips'
   import { connect } from 'wepy-redux'
   import { Todo } from '../store/actions'
-  import wxRequest from '../utils/wx_request'
   import Panel from '../components/panel'
 
   const { fetchList, deleteTodo } = Todo
