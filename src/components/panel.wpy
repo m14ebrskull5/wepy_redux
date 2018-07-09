@@ -34,9 +34,6 @@
     <slot name="title">
       Title
     </slot>
-    <slot>
-      sdsd
-    </slot>
   </view>
 </template>
 <script>

@@ -18,14 +18,7 @@ export default handleActions({
       return state
     } else {
       console.log(action)
-        // state.list.index.map((t) => {
-        //     if (t.id == action.payload.id) {
-        //         return action.payload
-        //     } else {
-        //         return t
-        //     }
-        // })
-        console.log(state.list.index)
+      console.log(state.list.index)
       return {
         ...state,
         list:{

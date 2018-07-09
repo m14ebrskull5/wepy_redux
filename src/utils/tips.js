@@ -91,7 +91,7 @@ export default class Tips {
   static error (title, onHide) {
     wx.showToast({
       title: title,
-      image: '/images/error.png',
+      icon: 'loading',
       mask: true,
       duration: 1000
     })
@@ -124,12 +124,13 @@ export default class Tips {
   }
 
   static loaded () {
+    console.log('loaded')
     if (Tips.isLoading) {
       Tips.isLoading = false
       if (wx.hideLoading) {
         wx.hideLoading()
-        wx.hideNavigationBarLoading()
       }
+      wx.hideNavigationBarLoading()
     }
   }
 

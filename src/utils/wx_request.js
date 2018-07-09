@@ -1,30 +1,43 @@
 import wepy from 'wepy'
 import Tips from './tips'
 const USER_TOKEN_KEY = 'user_token_key'
-const prefix = 'tcloud'
+// const prefix = 'https://qcloud.microvcard.com/9.6.3/public/index.php/'
+const prefix = 'https://yace.microvcard.com/test/public/index.php/'
 export default class WXRequest {
     static token = 0
-  static async request (method, url, data, loading = true, endpoint = '/') {
+
+    static init (app) {
+      this.app = app
+    }
+    static async request (method, url, data, loading = true, endpoint = '/') {
     if (loading) {
       Tips.navLoading()
     }
     // let reqURL = 'https://still-castle-28094.herokuapp.com/todos' + url
-      let reqURL = `https://${prefix}.microvcard.com/9.6.3/public/index.php/` + endpoint
-      if(!this.token){
-        console.log(this.token)
-        console.log("没有token")
-        let {code} =  await wepy.login();
-        console.log(code)
-          let {data:{session_key}} = await wepy.request({
-              url:`https://${prefix}.microvcard.com/9.6.3/public/index.php/token`,
-              method:'post',
-              data: {
-                  code: code
-              }
-          })
-          console.log(session_key)
-          this.token = session_key
+    // let reqURL = 'https://qcloud.microvcard.com/9.6.3/public/index.php/' + endpoint
+    let reqURL = prefix + endpoint
+    if(!this.token){
+      console.log('没有token，请求token', this.token)
+      let {code} =  await wepy.login()
+      console.log(code)
+      let tokendata = await wepy.request({
+        url:prefix + 'token',
+        method:'post',
+        data: {
+          code: code
+        }
+      })
+      this.app.openid = tokendata.data.openid
+      console.log('data',tokendata,this.app)
+      if(tokendata.statusCode >= 200 && tokendata.statusCode < 400){
+        this.token = tokendata.data.session_key
+      } else {
+        Tips.modal('token请求失败'+JSON.stringify(tokendata.data))
+        return 0;
       }
+    } else {
+      console.log('有token', this.token)
+    }
     return wepy.request({
       url: reqURL,
       method: method || 'GET',
@@ -36,16 +49,22 @@ export default class WXRequest {
     .then((res) => {
       Tips.loaded()
       if (res.statusCode >= 200 && res.statusCode < 400) {
-          console.log(res.data)
+        console.log('res.data', res.data)
         return res.data
+      } else if (res.statusCode === 400) {
+        console.log('token失效了,重新请求')
+        // this.token = 0
+        return this.request(method, url, data, loading, endpoint)
       } else {
-        var error = {}
-        error.statusCode = res.statusCode
-        error.code = res.data.code
-        error.message = res.data.error
-        Tips.error(error.message)
-        throw error
+        Tips.modal('请求失败，'+ url +JSON.stringify(res.data))
       }
+    })
+    .catch((res) => {
+      Tips.confirm('网络连接失败，请稍后重试'+url+JSON.stringify(res.data),(r)=>{
+        if(r){
+          return this.request(method, url, data, loading, endpoint)
+        }
+      })
     })
   }
 

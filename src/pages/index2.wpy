@@ -2,11 +2,10 @@
 .cell-container {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   height: 200rpx;
   width: 90%;
-  margin-left: 5%;
   border-radius: 10rpx;
   margin-top: 20rpx;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -29,29 +28,26 @@
 
 .button-container {
   width: 90%;
-  margin-left: 5%;
   margin-top: 30rpx;
 }
 </style>
 <template>
   <view class="container">
       <Panel>
-          <!-- <text slot="title">{{list.openid}}</text> -->
-          <text slot="title">{{list.openid?list.openid:reqStatus}}</text>
+          <text slot="title">{{list.openid}}</text>
       </Panel>
     <repeat for="{{list.index}}" key="index" index="index" item="item">
       <view class='cell-container'>
         <text>{{item.name}}</text>
-        <image src='{{item.userpic}}' />
-        <!-- <image src='{{item.userpic}}' @tap='gotoEdit({{item.id}})'/> -->
-        <!-- <view>
+        <image src='{{item.userpic}}' @tap='gotoEdit({{item.id}})'/>
+        <view>
           <image src='../../images/close.png' mode='aspectFit' @tap='removeTodo({{item._id}})'/>
-        </view> -->
+        </view>
       </view>
     </repeat>
-    <!-- <view class='button-container'>
+    <view class='button-container'>
         <button type='primary' size='default' @tap='gotoCreate'>Add Todo</button>
-    </view> -->
+    </view>
 
   </view>
 </template>
@@ -76,7 +72,7 @@
 
   export default class Index extends wepy.page {
     config = {
-      navigationBarTitleText: '微信'
+      navigationBarTitleText: 'Wepy Redux'
     }
 
     components = {
